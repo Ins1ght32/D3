@@ -1,0 +1,146 @@
+<html lang="en">
+    {% include "header.html" %}
+    <body>
+        {% include "navbar.html" %}
+        <main class="container-fluid">
+            <div class="d-flex h-75 flex-column min-vh-100" style = "padding-top: 2%; padding-bottom: 2%;">
+                <div class="card align-self-left bg-light border-light">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category }}" role="alert">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                    {% endwith %}
+                    <h1>User Profile</h1>
+                    <p><strong>Username:</strong> {{ user.name }}</p>
+                    <p><strong>Phone Number:</strong> {{ user.phoneNum }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changePasswordModal">
+                        Change Password
+                    </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- Change Password Modal -->
+        <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="POST" action="{{ url_for('changePass') }}" onsubmit="return validatePasswords()">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="currentPassword">Current Password</label>
+                                <input type="password" class="form-control" id="currentPassword" name="current_password" placeholder="Current Password"required>
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">New Password</label>
+                                <input type="password" class="form-control" id="newPassword" name="new_password" placeholder="New Password" minlength="8" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,128}$" title="Password must be at least 12 characters long, contain at least one digit, one uppercase letter, one lowercase letter, and one special character." required>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmNewPassword">Confirm New Password</label>
+                                <input type="password" class="form-control" id="confirmNewPassword" name="confirm_new_password" placeholder="Confirm New Password" required>
+                                <div class="invalid-feedback">
+                                    Passwords do not match.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Change Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script>
+            function validatePasswords() {
+                var currentPassword = document.getElementById('currentPassword');
+                var newPassword = document.getElementById('newPassword');
+                var confirmNewPassword = document.getElementById('confirmNewPassword');
+                var valid = true;
+
+                // Validate current password
+                if (currentPassword.value === '') {
+                    currentPassword.setCustomValidity('Current password is required');
+                    valid = false;
+                } else {
+                    currentPassword.setCustomValidity('');
+                }
+
+                // Validate new password
+                if (newPassword.value === '') {
+                    newPassword.setCustomValidity('New password is required');
+                    valid = false;
+                } else {
+                    newPassword.setCustomValidity('');
+                }
+
+                // Validate confirm new password
+                if (confirmNewPassword.value === '') {
+                    confirmNewPassword.setCustomValidity('Confirm new password is required');
+                    valid = false;
+                } else if (newPassword.value !== confirmNewPassword.value) {
+                    confirmNewPassword.setCustomValidity('Passwords do not match');
+                    valid = false;
+                } else {
+                    confirmNewPassword.setCustomValidity('');
+                }
+
+                if (!valid) {
+                    confirmNewPassword.reportValidity();
+                    newPassword.reportValidity();
+                    currentPassword.reportValidity();
+                }
+
+                return valid;
+            }
+
+            document.getElementById('newPassword').addEventListener('input', function() {
+                document.getElementById('confirmNewPassword').setCustomValidity('');
+            });
+
+            document.getElementById('confirmNewPassword').addEventListener('input', function() {
+                this.setCustomValidity('');
+            });
+
+            document.getElementById('currentPassword').addEventListener('input', function() {
+                this.setCustomValidity('');
+            });
+
+            window.onload = function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const error = urlParams.get('error');
+                
+                if (error) {
+                    $('#changePasswordModal').modal('show');
+                    if (error === "password_mismatch") {
+                        document.getElementById('confirmNewPassword').setCustomValidity('Passwords do not match');
+                        document.getElementById('confirmNewPassword').reportValidity();
+                    } else if (error === "password_incorrect") {
+                        document.getElementById('currentPassword').setCustomValidity('Current password is incorrect');
+                        document.getElementById('currentPassword').reportValidity();
+                    }
+                }
+            }
+
+            $('#changePasswordModal').on('hidden.bs.modal', function () {
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmNewPassword').value = '';
+                document.getElementById('confirmNewPassword').setCustomValidity('');
+                document.getElementById('currentPassword').setCustomValidity('');
+            });
+        </script>
+        {% include "footer.html" %}
+    </body>
+    
+</html>

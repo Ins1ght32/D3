@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include "header.html" %}
+
+<head>
+    {% include "navbar.html" %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        th {
+            font-family: monospace;
+            text-transform: uppercase;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .table th,
+        .table td {
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="table-container">
+            <table class="table table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>User ID</th>
+                        <th>Name</th>
+                        <th>Password</th>
+                        <th>Phone Number</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                       
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                    <tr>
+                        <td>{{ row["user_id"] }}</td>
+                        <td>{{ row["name"] }}</td>
+                        <td>{{ row["password"] }}</td>
+                        <td>{{ row["phoneNum"] }}</td>
+                        <td>{{ row["email"] }}</td>
+                        <td>{{ row["role"] }}</td>
+                        <td>{{ row["created_at"] }}</td>
+                        <td class="text-center">
+                            <form onsubmit="return confirm('Are you sure you want to DELETE this User from the Database?');"
+                                action="{{ url_for('delete') }}" method="POST" class="d-inline">
+                                <input type="hidden" name="user_id" value="{{ row['user_id'] }}">
+                                <input type="hidden" name="name" value="{{ row['name'] }}">
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+
+                        
+
+                        <!-- Someone help change this icon pls. -->
+                     
+                            <form onsubmit="return confirm('Unlock This Users Account?');"
+                                action="{{ url_for('unlock') }}" method="POST" class="d-inline">
+                                <input type="hidden" name="user_id" value="{{ row['user_id'] }}">
+                                <input type="hidden" name="name" value="{{ row['name'] }}">
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-unlock"></i></button>
+                            </form>
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% include "footer.html" %}
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

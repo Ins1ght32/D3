@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% include "header.html" %}
+    <head>
+        {% include "navbar.html" %}
+    </head>
+    <body>
+        <!-- Page Content -->
+        <div class="container mt-5">
+            <!-- Product Details Section -->
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="{{ url_for('product_image', product_id=product.product_id) }}" alt="{{ product.product_name }}" class="img-fluid mb-4 product-img">
+                </div>
+                <div class="col-md-6">
+                    <h2>{{ product.product_name }}</h2>
+                    <div class="row mt-4">
+                        <!-- Product Metadata Left -->
+                        <div class="col-md-6">
+                            <h5>Price</h5>
+                            <p>${{ product.price }}</p>
+                            <h5>Size</h5>
+                            <p>{{ product.size }}</p>
+                            <h5>Condition</h5>
+                            <p>{{ product.condition }}</p>
+                        </div>
+                        <!-- Product Metadata Right -->
+                        <div class="col-md-6">
+                            <h5>Description</h5>
+                            <p>{{ product.description }}</p>
+                            <h5>Quantity Available</h5>
+                            <p>{{ product.quantity }}</p>
+                            <h5>Created At</h5>
+                            <p>{{ product.created_at }}</p>
+                            {% if product.user_id == user_id %}
+                            <form onsubmit="return confirm('Are you sure you want to DELETE this Product from the Database?');" action="{{ url_for('delete_product', product_id=product.product_id) }}" method="POST">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <!-- Product Reviews Section -->
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h3>Product Reviews</h3>
+                    {% for review in reviews %}
+                    <!-- Review Box -->
+                    <div class="border rounded mb-3 p-3">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p><strong>Date Reviewed:</strong> {{ review.created_at }}</p>
+                                <p><strong>Review by:</strong> {{ review.user_name }}</p>
+                                <p><strong>Rating:</strong> {{ review.rating }}/5</p>
+                                <p><strong>Review:</strong> {{ review.comment }}</p>
+                                {% if review.user_id == user_id %}
+                                <form action="{{ url_for('remove_review') }}" method="post" class="remove-review">
+                                    <input type="hidden" name="review_id" value="{{ review.review_id }}">
+                                    <button type="submit" class="btn btn-danger">Remove</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <!-- If there are no reviews -->
+                    {% if not reviews %}
+                    <p>No reviews yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- Footer -->
+        {% include "footer.html" %}
+    </body>
+</html>
