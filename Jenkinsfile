@@ -3,7 +3,7 @@ pipeline {
 	stages {
 		stage('Checkout SCM') {
 			steps {
-				git 'https://github.com/Ins1ght32/OWASP_CHECK.git'
+				git 'https://github.com/Ins1ght32/D3.git'
 			}
 		}
 
