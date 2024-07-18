@@ -277,6 +277,7 @@ def login():
                         # return redirect(url_for("verifyAccount"))
                     else:
                         return redirect(url_for("sendOTP"))
+                        return redirect(url_for("sendOTP"))
             except VerifyMismatchError:
                 # Password verification failed
                 flash("Invalid username or password", "error")
